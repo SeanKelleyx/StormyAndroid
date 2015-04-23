@@ -14,12 +14,17 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 
 public class MainActivity extends ActionBarActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    private CurrentWeather mCurrentWeather;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,13 +48,16 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void onResponse(Response response) throws IOException {
                     try {
-                        Log.v(TAG, response.body().string());
+                        String jsonData = response.body().string();
+                        Log.v(TAG, jsonData);
                         if (response.isSuccessful()) {
-                            //todo
+                            mCurrentWeather = getCurrentDetails(jsonData);
                         } else {
                             alertUserAboutError();
                         }
                     } catch (IOException e) {
+                        Log.e(TAG, "Exception caught: ", e);
+                    } catch (JSONException e){
                         Log.e(TAG, "Exception caught: ", e);
                     }
                 }
@@ -58,6 +66,14 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(this, getString(R.string.network_unavailable_message), Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    private CurrentWeather getCurrentDetails(String jsonData) throws JSONException {
+        JSONObject forecast = new JSONObject(jsonData);
+        JSONObject currently = forecast.getJSONObject("currently");
+        CurrentWeather currentWeather = new CurrentWeather(currently);
+
+        return currentWeather;
     }
 
     private boolean isNetworkAvailable() {
