@@ -72,7 +72,7 @@ public class MainActivity extends ActionBarActivity {
         JSONObject forecast = new JSONObject(jsonData);
         JSONObject currently = forecast.getJSONObject("currently");
         CurrentWeather currentWeather = new CurrentWeather(currently);
-
+        currentWeather.setTimeZone(forecast.getString("timezone"));
         return currentWeather;
     }
 
