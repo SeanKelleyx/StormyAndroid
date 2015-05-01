@@ -19,13 +19,14 @@ public class CurrentWeather {
     private String mSummary;
     private String mTimeZone;
 
-    public CurrentWeather(JSONObject currently) throws JSONException {
+    public CurrentWeather(JSONObject currently, String timezone) throws JSONException {
         this.setHumidity(currently.getDouble("humidity"));
         this.setTime(currently.getLong("time"));
         this.setIcon(currently.getString("icon"));
         this.setPrecipChance(currently.getDouble("precipProbability"));
         this.setSummary(currently.getString("summary"));
         this.setTemperature(currently.getDouble("temperature"));
+        this.setTimeZone(timezone);
     }
 
     public String getFormattedTime(){
