@@ -1,14 +1,16 @@
 package com.sean.stormy;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -19,16 +21,27 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 
 public class MainActivity extends ActionBarActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private CurrentWeather mCurrentWeather;
+    @InjectView(R.id.temperatureLabel) TextView mTemperatureLabel;
+    @InjectView(R.id.timeLabel) TextView mTimeLabel;
+    @InjectView(R.id.humidityValue) TextView mHumidityValue;
+    @InjectView(R.id.precipValue) TextView mPrecipValue;
+    @InjectView(R.id.summaryLabel) TextView mSummaryLabel;
+    @InjectView(R.id.iconImageView) ImageView mIconImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.inject(this);
+
         String apiKey = "4a7a86784dd76767baf4435021887aa1";
         double latitude = 37.8267;
         double longitude = -122.423;
@@ -38,26 +51,28 @@ public class MainActivity extends ActionBarActivity {
             Request request = new Request.Builder()
                     .url(forecastUrl)
                     .build();
-            Call call = client.newCall(request);
-            call.enqueue(new Callback() {
+            client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
-
+                    Log.v(TAG, e.getMessage());
                 }
 
                 @Override
-                public void onResponse(Response response) throws IOException {
+                public void onResponse(Response response){
                     try {
                         String jsonData = response.body().string();
-                        Log.v(TAG, jsonData);
                         if (response.isSuccessful()) {
                             mCurrentWeather = getCurrentDetails(jsonData);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateDisplay();
+                                }
+                            });
                         } else {
                             alertUserAboutError();
                         }
-                    } catch (IOException e) {
-                        Log.e(TAG, "Exception caught: ", e);
-                    } catch (JSONException e){
+                    } catch (Exception e) {
                         Log.e(TAG, "Exception caught: ", e);
                     }
                 }
@@ -68,11 +83,20 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    private void updateDisplay() {
+        mTemperatureLabel.setText(mCurrentWeather.getTemperature()+"");
+        mTimeLabel.setText("At " +  mCurrentWeather.getFormattedTime() + " it is");
+        mHumidityValue.setText(mCurrentWeather.getHumidity() + "");
+        mPrecipValue.setText(mCurrentWeather.getPrecipChance() + "%" );
+        mSummaryLabel.setText(mCurrentWeather.getSummary());
+        Drawable drawable = getResources().getDrawable(mCurrentWeather.getIconId());
+        mIconImageView.setImageDrawable(drawable);
+    }
+
     private CurrentWeather getCurrentDetails(String jsonData) throws JSONException {
         JSONObject forecast = new JSONObject(jsonData);
         JSONObject currently = forecast.getJSONObject("currently");
-        CurrentWeather currentWeather = new CurrentWeather(currently, forecast.getString("timezone"));
-        return currentWeather;
+        return new CurrentWeather(currently, forecast.getString("timezone"));
     }
 
     private boolean isNetworkAvailable() {
