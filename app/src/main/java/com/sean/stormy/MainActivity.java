@@ -39,6 +39,11 @@ public class MainActivity extends ActionBarActivity {
     @InjectView(R.id.refreshImageView) ImageView mRefreshImageView;
     @InjectView(R.id.progressBar) ProgressBar mProgressBar;
 
+    @InjectView(R.id.degreeImageView) ImageView mDegreeImageView;
+    @InjectView(R.id.humidityLabel) TextView mHumidityLabel;
+    @InjectView(R.id.precipLabel) TextView mPrecipLabel;
+    @InjectView(R.id.locationLabel) TextView mLocationLabel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,12 +129,42 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void updateDisplay() {
-        mTemperatureLabel.setText(mCurrentWeather.getTemperature()+"");
+        toggleView();
+        mTemperatureLabel.setText(mCurrentWeather.getTemperature() + "");
         mTimeLabel.setText("At " +  mCurrentWeather.getFormattedTime() + " it is");
         mHumidityValue.setText(mCurrentWeather.getHumidity() + "");
-        mPrecipValue.setText(mCurrentWeather.getPrecipChance() + "%" );
+        mPrecipValue.setText(mCurrentWeather.getPrecipChance() + "%");
         mSummaryLabel.setText(mCurrentWeather.getSummary());
         mIconImageView.setImageDrawable(getResources().getDrawable(mCurrentWeather.getIconId()));
+        toggleView();
+    }
+
+    private void toggleView() {
+        if(mTemperatureLabel.getVisibility() == View.VISIBLE) {
+            mTemperatureLabel.setVisibility(View.INVISIBLE);
+            mTimeLabel.setVisibility(View.INVISIBLE);
+            mHumidityValue.setVisibility(View.INVISIBLE);
+            mPrecipValue.setVisibility(View.INVISIBLE);
+            mSummaryLabel.setVisibility(View.INVISIBLE);
+            mIconImageView.setVisibility(View.INVISIBLE);
+
+            mDegreeImageView.setVisibility(View.INVISIBLE);
+            mLocationLabel.setVisibility(View.INVISIBLE);
+            mHumidityLabel.setVisibility(View.INVISIBLE);
+            mPrecipLabel.setVisibility(View.INVISIBLE);
+        } else {
+            mTemperatureLabel.setVisibility(View.VISIBLE);
+            mTimeLabel.setVisibility(View.VISIBLE);
+            mHumidityValue.setVisibility(View.VISIBLE);
+            mPrecipValue.setVisibility(View.VISIBLE);
+            mSummaryLabel.setVisibility(View.VISIBLE);
+            mIconImageView.setVisibility(View.VISIBLE);
+
+            mDegreeImageView.setVisibility(View.VISIBLE);
+            mLocationLabel.setVisibility(View.VISIBLE);
+            mHumidityLabel.setVisibility(View.VISIBLE);
+            mPrecipLabel.setVisibility(View.VISIBLE);
+        }
     }
 
     private CurrentWeather getCurrentDetails(String jsonData) throws JSONException {
