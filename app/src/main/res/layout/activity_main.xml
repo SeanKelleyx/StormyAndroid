@@ -13,7 +13,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="--"
+        android:text="@string/double_dash"
         android:id="@+id/temperatureLabel"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
@@ -21,6 +21,7 @@
         android:textSize="150sp" />
 
     <ImageView
+        android:contentDescription="@string/degree_symbol_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/degreeImageView"
@@ -53,6 +54,7 @@
         android:textSize="24sp" />
 
     <ImageView
+        android:contentDescription="@string/weather_icon_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/iconImageView"
@@ -69,7 +71,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:id="@+id/linearLayout"
-        android:animateLayoutChanges="true">
+        android:animateLayoutChanges="true"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:orientation="vertical"
@@ -81,7 +84,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="HUMIDITY"
+                android:text="@string/humidity_label_text"
                 android:id="@+id/humidityLabel"
                 android:textColor="#80ffffff"
                 android:gravity="center_horizontal" />
@@ -89,7 +92,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="---"
+                android:text="@string/triple_dash"
                 android:id="@+id/humidityValue"
                 android:textColor="#ffffffff"
                 android:textSize="24sp"
@@ -106,7 +109,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="RAIN/SNOW?"
+                android:text="@string/precip_label_text"
                 android:id="@+id/precipLabel"
                 android:textColor="#80ffffff"
                 android:gravity="center_horizontal" />
@@ -114,7 +117,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="---"
+                android:text="@string/triple_dash"
                 android:id="@+id/precipValue"
                 android:textColor="#ffffffff"
                 android:textSize="24sp"
@@ -125,13 +128,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Stormy with a chance of rain."
+        android:text=""
         android:id="@+id/summaryLabel"
         android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:textColor="#ffffffff"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:gravity="center_horizontal" />
 
     <ImageView

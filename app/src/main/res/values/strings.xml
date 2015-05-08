@@ -8,4 +8,10 @@
     <string name="error_ok_button_text">OK</string>
     <string name="error_dialog_tag">error_dialog</string>
     <string name="network_unavailable_message">Network is unavailable!</string>
+    <string name="double_dash">--</string>
+    <string name="triple_dash">---</string>
+    <string name="humidity_label_text">HUMIDITY</string>
+    <string name="precip_label_text">RAIN/SNOW?</string>
+    <string name="degree_symbol_description">Degree Symbol</string>
+    <string name="weather_icon_description">Weather Icon</string>
 </resources>
