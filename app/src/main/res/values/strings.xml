@@ -14,4 +14,6 @@
     <string name="precip_label_text">RAIN/SNOW?</string>
     <string name="degree_symbol_description">Degree Symbol</string>
     <string name="weather_icon_description">Weather Icon</string>
+    <string name="connection_suspended">The Location Connection is Suspended</string>
+    <string name="connection_failed">The Location Connection has Failed</string>
 </resources>

@@ -1,10 +1,13 @@
 package com.sean.stormy;
 
+import android.app.Activity;
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -21,13 +27,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
+public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-public class MainActivity extends ActionBarActivity {
-
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private String mCurrentCity;
+    private String mCurrentState;
+    private double mLatitude;
+    private double mLongitude;
     public static final String TAG = MainActivity.class.getSimpleName();
     private CurrentWeather mCurrentWeather;
     @InjectView(R.id.temperatureLabel) TextView mTemperatureLabel;
@@ -45,6 +58,20 @@ public class MainActivity extends ActionBarActivity {
     @InjectView(R.id.locationLabel) TextView mLocationLabel;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        //if (!mResolvingError) {  // more about this later
+            mGoogleApiClient.connect();
+        //}
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -52,24 +79,27 @@ public class MainActivity extends ActionBarActivity {
 
         mProgressBar.setVisibility(View.INVISIBLE);
 
-        final double latitude = 37.8267;
-        final double longitude = -122.423;
+        //final double latitude = 37.8267;
+        //final double longitude = -122.423;
 
         mRefreshImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getForecast(latitude, longitude);
+                //getForecast(latitude, longitude);
+                toggleRefresh();
+                getForecast();
             }
         });
-        getForecast(latitude, longitude);
+        //getForecast(latitude, longitude);
+        toggleRefresh();
+        buildGoogleApiClient();
     }
 
-    private void getForecast(double latitude, double longitude) {
+    private void getForecast() {
         String apiKey = "4a7a86784dd76767baf4435021887aa1";
 
-        String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+latitude+","+longitude;
+        String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+mLatitude+","+mLongitude;
         if (isNetworkAvailable()) {
-            toggleRefresh();
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(forecastUrl)
@@ -114,6 +144,7 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
         }else{
+            toggleRefresh();
             Toast.makeText(this, getString(R.string.network_unavailable_message), Toast.LENGTH_LONG).show();
         }
     }
@@ -130,6 +161,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void updateDisplay() {
         toggleView();
+        mLocationLabel.setText(mCurrentCity + ", " + mCurrentState);
         mTemperatureLabel.setText(mCurrentWeather.getTemperature() + "");
         mTimeLabel.setText("At " +  mCurrentWeather.getFormattedTime() + " it is");
         mHumidityValue.setText(mCurrentWeather.getHumidity() + "");
@@ -167,6 +199,14 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
     private CurrentWeather getCurrentDetails(String jsonData) throws JSONException {
         JSONObject forecast = new JSONObject(jsonData);
         JSONObject currently = forecast.getJSONObject("currently");
@@ -186,5 +226,39 @@ public class MainActivity extends ActionBarActivity {
     private void alertUserAboutError() {
         AlertDialogFragment dialog = new AlertDialogFragment();
         dialog.show(getFragmentManager(), getString(R.string.error_dialog_tag));
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            setLocationInfo();
+        }
+    }
+
+    private void setLocationInfo() {
+        mLatitude = mLastLocation.getLatitude();
+        mLongitude = mLastLocation.getLongitude();
+        Geocoder gcd = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = gcd.getFromLocation(mLatitude, mLongitude, 1);
+            if (addresses.size() > 0)
+                mCurrentCity = addresses.get(0).getLocality();
+                mCurrentState = addresses.get(0).getAdminArea();
+        }catch (Exception e){
+            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+        getForecast();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Toast.makeText(this, getString(R.string.connection_suspended), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Toast.makeText(this, getString(R.string.connection_failed), Toast.LENGTH_LONG).show();
     }
 }
