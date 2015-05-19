@@ -66,20 +66,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        if (!mResolvingError) {
-            mGoogleApiClient.connect();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -119,7 +105,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                         @Override
                         public void run() {
                             toggleRefresh();
-                            alertUserAboutError();
+                            alertUserAboutError(R.string.error_message);
                         }
                     });
                     Log.v(TAG, e.getMessage());
@@ -144,7 +130,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                                 }
                             });
                         } else {
-                            alertUserAboutError();
+                            alertUserAboutError(R.string.error_message);
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "Exception caught: ", e);
@@ -236,15 +222,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         return isAvailable;
     }
 
-    private void alertUserAboutError() {
+    private void alertUserAboutError(int errorId) {
         AlertDialogFragment dialog = new AlertDialogFragment();
+        dialog.setErrorText(errorId);
         dialog.show(getFragmentManager(), getString(R.string.error_dialog_tag));
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        checkLocation();
     }
 
     private void checkLocation(){
@@ -252,15 +233,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }else{
             setLocationInfo();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
         }
     }
 
@@ -275,14 +247,43 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 mCurrentState = addresses.get(0).getAdminArea();
             }
         }catch (Exception e){
-            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            alertUserAboutError(R.string.error_with_location);
         }
         getForecast();
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (!mResolvingError) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        checkLocation();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
     public void onConnectionSuspended(int i) {
-        Toast.makeText(this, getString(R.string.connection_suspended), Toast.LENGTH_LONG).show();
+        alertUserAboutError(R.string.connection_suspended);
     }
 
     @Override
@@ -301,7 +302,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         } else {
             // Show dialog using GooglePlayServicesUtil.getErrorDialog()
             mResolvingError = true;
-            Toast.makeText(this, getString(R.string.connection_failed), Toast.LENGTH_LONG).show();
+            alertUserAboutError(R.string.connection_failed);
             mResolvingError = false;
 
         }
