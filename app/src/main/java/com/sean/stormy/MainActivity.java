@@ -41,10 +41,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private boolean mResolvingError;
-    private double mLatitude;
-    private double mLongitude;
-    private String mCurrentCity;
-    private String mCurrentState;
+    private CurrentLocation mCurrentLocation;
     private CurrentWeather mCurrentWeather;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -92,7 +89,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private void getForecast() {
         String apiKey = "4a7a86784dd76767baf4435021887aa1";
 
-        String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+mLatitude+","+mLongitude;
+        String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+mCurrentLocation.getLatitude()+","+mCurrentLocation.getLongitude();
         if (isNetworkAvailable()) {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -155,7 +152,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     private void updateDisplay() {
         toggleView();
-        mLocationLabel.setText(mCurrentCity + ", " + mCurrentState);
+        mLocationLabel.setText(mCurrentLocation.getCity() + ", " + mCurrentLocation.getState());
         mTemperatureLabel.setText(mCurrentWeather.getTemperature() + "");
         mTimeLabel.setText("At " +  mCurrentWeather.getFormattedTime() + " it is");
         mHumidityValue.setText(mCurrentWeather.getHumidity() + "");
@@ -237,14 +234,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
     private void setLocationInfo() {
-        mLatitude = mLastLocation.getLatitude();
-        mLongitude = mLastLocation.getLongitude();
         Geocoder gcd = new Geocoder(this, Locale.getDefault());
         try {
-            List<Address> addresses = gcd.getFromLocation(mLatitude, mLongitude, 1);
+            List<Address> addresses = gcd.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
             if (addresses.size() > 0) {
-                mCurrentCity = addresses.get(0).getLocality();
-                mCurrentState = addresses.get(0).getAdminArea();
+                mCurrentLocation = new CurrentLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), addresses.get(0).getAdminArea(), addresses.get(0).getLocality());
             }
         }catch (Exception e){
             alertUserAboutError(R.string.error_with_location);
