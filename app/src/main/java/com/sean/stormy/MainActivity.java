@@ -67,11 +67,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-
         mProgressBar.setVisibility(View.INVISIBLE);
-
-        //final double latitude = 37.8267;
-        //final double longitude = -122.423;
 
         mRefreshImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +83,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
     private void getForecast() {
-        String apiKey = "4a7a86784dd76767baf4435021887aa1";
+        String apiKey = getString(R.string.API_KEY_DARKSKY);
 
         String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+mCurrentLocation.getLatitude()+","+mCurrentLocation.getLongitude();
         if (isNetworkAvailable()) {
