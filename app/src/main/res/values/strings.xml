@@ -18,4 +18,7 @@
     <string name="connection_failed">The Location Connection has Failed</string>
     <string name="error_with_location">There was an error getting your location.</string>
     <string name="API_KEY_DARKSKY">4a7a86784dd76767baf4435021887aa1</string>
+    <string name="refresh_image">refresh image</string>
+    <string name="hourly_button_text">HOURLY</string>
+    <string name="daily_button_text">7 DAY</string>
 </resources>

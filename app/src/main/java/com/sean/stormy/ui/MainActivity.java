@@ -83,12 +83,12 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
             @Override
             public void onClick(View v) {
                 //getForecast(latitude, longitude);
-                toggleRefresh();
+                toggleRefresh(true);
                 getForecast();
             }
         });
         //getForecast(latitude, longitude);
-        toggleRefresh();
+        toggleRefresh(true);
         buildGoogleApiClient();
     }
 
@@ -107,7 +107,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            toggleRefresh();
+                            toggleRefresh(false);
                             alertUserAboutError(R.string.error_message);
                         }
                     });
@@ -119,7 +119,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            toggleRefresh();
+                            toggleRefresh(false);
                         }
                     });
                     try {
@@ -141,13 +141,13 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
                 }
             });
         }else{
-            toggleRefresh();
+            toggleRefresh(false);
             Toast.makeText(this, getString(R.string.network_unavailable_message), Toast.LENGTH_LONG).show();
         }
     }
 
-    private void toggleRefresh() {
-        if(mProgressBar.getVisibility() == View.INVISIBLE) {
+    private void toggleRefresh(boolean turnOn) {
+        if(turnOn) {
             mProgressBar.setVisibility(View.VISIBLE);
             mRefreshImageView.setVisibility(View.INVISIBLE);
         } else {
@@ -157,7 +157,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     }
 
     private void updateDisplay() {
-        toggleView();
+        toggleView(true);
         mLocationLabel.setText(mCurrentCity + ", " + mCurrentState);
         mTemperatureLabel.setText(mForecast.getCurrent().getTemperature() + "");
         mTimeLabel.setText("At " +  mForecast.getCurrent().getFormattedTime() + " it is");
@@ -165,11 +165,11 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
         mPrecipValue.setText(mForecast.getCurrent().getPrecipChance() + "%");
         mSummaryLabel.setText(mForecast.getCurrent().getSummary());
         mIconImageView.setImageDrawable(getResources().getDrawable(mForecast.getCurrent().getIconId()));
-        toggleView();
+        toggleView(false);
     }
 
-    private void toggleView() {
-        if(mTemperatureLabel.getVisibility() == View.VISIBLE) {
+    private void toggleView(boolean hideItems) {
+        if(hideItems) {
             mTemperatureLabel.setVisibility(View.INVISIBLE);
             mTimeLabel.setVisibility(View.INVISIBLE);
             mHumidityValue.setVisibility(View.INVISIBLE);
