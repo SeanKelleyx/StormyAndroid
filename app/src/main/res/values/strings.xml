@@ -21,4 +21,6 @@
     <string name="refresh_image">refresh image</string>
     <string name="hourly_button_text">HOURLY</string>
     <string name="daily_button_text">7 DAY</string>
+    <string name="title_activity_daily_forecast">DailyForecastActivity</string>
+    <string name="empty_list_text">There is no data to display</string>
 </resources>

@@ -39,6 +39,7 @@ import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class  MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -61,12 +62,10 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     @InjectView(R.id.iconImageView) ImageView mIconImageView;
     @InjectView(R.id.refreshImageView) ImageView mRefreshImageView;
     @InjectView(R.id.progressBar) ProgressBar mProgressBar;
-
     @InjectView(R.id.degreeImageView) ImageView mDegreeImageView;
     @InjectView(R.id.humidityLabel) TextView mHumidityLabel;
     @InjectView(R.id.precipLabel) TextView mPrecipLabel;
     @InjectView(R.id.locationLabel) TextView mLocationLabel;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -334,4 +333,16 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     public void onLocationChanged(Location location) {
         checkLocation();
     }
+
+    @OnClick (R.id.dailyButton)
+    public void startDailyActivity(View view){
+        Intent intent = new Intent(this, DailyForecastActivity.class);
+        startActivity(intent);
+    }
+
+//    @OnClick (R.id.hourlyButton)
+//    public void startHourlyActivity(View view){
+//        Intent intent = new Intent(this, HourlyForecastActivity.class);
+//        startActivity(intent);
+//    }
 }
