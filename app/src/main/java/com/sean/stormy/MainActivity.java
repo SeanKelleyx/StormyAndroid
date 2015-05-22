@@ -37,12 +37,14 @@ import java.util.Locale;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class  MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private boolean mResolvingError;
-    private CurrentLocation mCurrentLocation;
+    private double mLatitude;
+    private double mLongitude;
+    private String mCurrentCity;
+    private String mCurrentState;
     private CurrentWeather mCurrentWeather;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -68,23 +70,29 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+
         mProgressBar.setVisibility(View.INVISIBLE);
+
+        //final double latitude = 37.8267;
+        //final double longitude = -122.423;
 
         mRefreshImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleRefresh(true);
+                //getForecast(latitude, longitude);
+                toggleRefresh();
                 getForecast();
             }
         });
-        toggleRefresh(true);
+        //getForecast(latitude, longitude);
+        toggleRefresh();
         buildGoogleApiClient();
     }
 
     private void getForecast() {
-        String apiKey = getString(R.string.API_KEY_DARKSKY);
-        String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"
-                +mCurrentLocation.getLatitude()+","+mCurrentLocation.getLongitude();
+        String apiKey = "4a7a86784dd76767baf4435021887aa1";
+
+        String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+mLatitude+","+mLongitude;
         if (isNetworkAvailable()) {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -96,7 +104,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            toggleRefresh(false);
+                            toggleRefresh();
                             alertUserAboutError(R.string.error_message);
                         }
                     });
@@ -108,7 +116,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            toggleRefresh(false);
+                            toggleRefresh();
                         }
                     });
                     try {
@@ -130,13 +138,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 }
             });
         }else{
-            toggleRefresh(false);
+            toggleRefresh();
             Toast.makeText(this, getString(R.string.network_unavailable_message), Toast.LENGTH_LONG).show();
         }
     }
 
-    private void toggleRefresh(boolean turnOn) {
-        if(turnOn) {
+    private void toggleRefresh() {
+        if(mProgressBar.getVisibility() == View.INVISIBLE) {
             mProgressBar.setVisibility(View.VISIBLE);
             mRefreshImageView.setVisibility(View.INVISIBLE);
         } else {
@@ -146,19 +154,19 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
     private void updateDisplay() {
-        toggleView(true);
-        mLocationLabel.setText(mCurrentLocation.getCity() + ", " + mCurrentLocation.getState());
+        toggleView();
+        mLocationLabel.setText(mCurrentCity + ", " + mCurrentState);
         mTemperatureLabel.setText(mCurrentWeather.getTemperature() + "");
         mTimeLabel.setText("At " +  mCurrentWeather.getFormattedTime() + " it is");
         mHumidityValue.setText(mCurrentWeather.getHumidity() + "");
         mPrecipValue.setText(mCurrentWeather.getPrecipChance() + "%");
         mSummaryLabel.setText(mCurrentWeather.getSummary());
         mIconImageView.setImageDrawable(getResources().getDrawable(mCurrentWeather.getIconId()));
-        toggleView(false);
+        toggleView();
     }
 
-    private void toggleView(boolean hideItems) {
-        if(hideItems) {
+    private void toggleView() {
+        if(mTemperatureLabel.getVisibility() == View.VISIBLE) {
             mTemperatureLabel.setVisibility(View.INVISIBLE);
             mTimeLabel.setVisibility(View.INVISIBLE);
             mHumidityValue.setVisibility(View.INVISIBLE);
@@ -205,8 +213,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
     private boolean isNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = manager.getActiveNetworkInfo();
         boolean isAvailable = false;
         if (networkInfo != null && networkInfo.isConnected()){
@@ -223,22 +230,21 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     private void checkLocation(){
         if (mLastLocation == null) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                    mLocationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }else{
             setLocationInfo();
         }
     }
 
     private void setLocationInfo() {
+        mLatitude = mLastLocation.getLatitude();
+        mLongitude = mLastLocation.getLongitude();
         Geocoder gcd = new Geocoder(this, Locale.getDefault());
         try {
-            List<Address> addresses = gcd.getFromLocation(mLastLocation.getLatitude(),
-                    mLastLocation.getLongitude(), 1);
+            List<Address> addresses = gcd.getFromLocation(mLatitude, mLongitude, 1);
             if (addresses.size() > 0) {
-                mCurrentLocation = new CurrentLocation(mLastLocation.getLatitude(),
-                        mLastLocation.getLongitude(), addresses.get(0).getAdminArea(),
-                        addresses.get(0).getLocality());
+                mCurrentCity = addresses.get(0).getLocality();
+                mCurrentState = addresses.get(0).getAdminArea();
             }
         }catch (Exception e){
             alertUserAboutError(R.string.error_with_location);
@@ -294,6 +300,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 mGoogleApiClient.connect();
             }
         } else {
+            // Show dialog using GooglePlayServicesUtil.getErrorDialog()
             mResolvingError = true;
             alertUserAboutError(R.string.connection_failed);
             mResolvingError = false;
@@ -317,7 +324,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation = location;
         checkLocation();
     }
 }
