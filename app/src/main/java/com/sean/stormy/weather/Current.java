@@ -1,4 +1,6 @@
-package com.sean.stormy;
+package com.sean.stormy.weather;
+
+import com.sean.stormy.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,10 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-/**
+/*
  * Created by snkelley on 4/23/2015.
  */
-public class CurrentWeather {
+public class Current {
     private String mIcon;
     private long mTime;
     private double mTemperature;
@@ -19,7 +21,7 @@ public class CurrentWeather {
     private String mSummary;
     private String mTimeZone;
 
-    public CurrentWeather(JSONObject currently, String timezone) throws JSONException {
+    public Current(JSONObject currently, String timezone) throws JSONException {
         this.setHumidity(currently.getDouble("humidity"));
         this.setTime(currently.getLong("time"));
         this.setIcon(currently.getString("icon"));

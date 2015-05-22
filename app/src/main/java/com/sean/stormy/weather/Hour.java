@@ -1,4 +1,7 @@
-package com.sean.stormy;
+package com.sean.stormy.weather;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /*
  * Created by SeanKelley on  5/21/15.
@@ -8,7 +11,15 @@ public class Hour {
     private String mSummary;
     private double mTemperature;
     private String mIcon;
-    private String mTimeZone;
+    private String mTimezone;
+
+    public Hour(JSONObject JSONData, String timezone) throws JSONException {
+        this.setTime(JSONData.getLong("time"));
+        this.setSummary(JSONData.getString("summary"));
+        this.setTemperature(JSONData.getDouble("temperature"));
+        this.setIcon(JSONData.getString("icon"));
+        this.setTimezone(timezone);
+    }
 
     public long getTime() {
         return mTime;
@@ -42,11 +53,11 @@ public class Hour {
         mIcon = icon;
     }
 
-    public String getTimeZone() {
-        return mTimeZone;
+    public String getTimezone() {
+        return mTimezone;
     }
 
-    public void setTimeZone(String timeZone) {
-        mTimeZone = timeZone;
+    public void setTimezone(String timezone) {
+        mTimezone = timezone;
     }
 }

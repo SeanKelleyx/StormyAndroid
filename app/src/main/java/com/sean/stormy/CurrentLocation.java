@@ -1,5 +1,5 @@
 package com.sean.stormy;
-/**
+/*
  * Created by snkelley on 5/20/2015.
  */
 public class CurrentLocation {

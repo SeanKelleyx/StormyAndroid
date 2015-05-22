@@ -1,4 +1,4 @@
-package com.sean.stormy;
+package com.sean.stormy.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,6 +22,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.sean.stormy.R;
+import com.sean.stormy.weather.Current;
+import com.sean.stormy.weather.Forecast;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -45,7 +48,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     private double mLongitude;
     private String mCurrentCity;
     private String mCurrentState;
-    private CurrentWeather mCurrentWeather;
+    private Forecast mForecast;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
@@ -90,7 +93,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     }
 
     private void getForecast() {
-        String apiKey = "4a7a86784dd76767baf4435021887aa1";
+        String apiKey = getString(R.string.API_KEY_DARKSKY);
 
         String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+mLatitude+","+mLongitude;
         if (isNetworkAvailable()) {
@@ -122,7 +125,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
                     try {
                         String jsonData = response.body().string();
                         if (response.isSuccessful()) {
-                            mCurrentWeather = getCurrentDetails(jsonData);
+                            mForecast = parseForecastDetails(jsonData);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -156,12 +159,12 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     private void updateDisplay() {
         toggleView();
         mLocationLabel.setText(mCurrentCity + ", " + mCurrentState);
-        mTemperatureLabel.setText(mCurrentWeather.getTemperature() + "");
-        mTimeLabel.setText("At " +  mCurrentWeather.getFormattedTime() + " it is");
-        mHumidityValue.setText(mCurrentWeather.getHumidity() + "");
-        mPrecipValue.setText(mCurrentWeather.getPrecipChance() + "%");
-        mSummaryLabel.setText(mCurrentWeather.getSummary());
-        mIconImageView.setImageDrawable(getResources().getDrawable(mCurrentWeather.getIconId()));
+        mTemperatureLabel.setText(mForecast.getCurrent().getTemperature() + "");
+        mTimeLabel.setText("At " +  mForecast.getCurrent().getFormattedTime() + " it is");
+        mHumidityValue.setText(mForecast.getCurrent().getHumidity() + "");
+        mPrecipValue.setText(mForecast.getCurrent().getPrecipChance() + "%");
+        mSummaryLabel.setText(mForecast.getCurrent().getSummary());
+        mIconImageView.setImageDrawable(getResources().getDrawable(mForecast.getCurrent().getIconId()));
         toggleView();
     }
 
@@ -206,10 +209,15 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
     }
 
-    private CurrentWeather getCurrentDetails(String jsonData) throws JSONException {
+    private Forecast parseForecastDetails(String JSONData) throws JSONException {
+        Forecast forecast = new Forecast(JSONData);
+        return forecast;
+    }
+
+    private Current getCurrentDetails(String jsonData) throws JSONException {
         JSONObject forecast = new JSONObject(jsonData);
         JSONObject currently = forecast.getJSONObject("currently");
-        return new CurrentWeather(currently, forecast.getString("timezone"));
+        return new Current(currently, forecast.getString("timezone"));
     }
 
     private boolean isNetworkAvailable() {
