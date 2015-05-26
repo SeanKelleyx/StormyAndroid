@@ -22,8 +22,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.sean.stormy.CurrentLocation;
 import com.sean.stormy.R;
-import com.sean.stormy.weather.Current;
 import com.sean.stormy.weather.Forecast;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -31,7 +31,6 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,11 +43,10 @@ import butterknife.OnClick;
 public class  MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String DAILY_FORECAST = "DAILY_FORECAST";
+    public static final String CITY_STATE = "CITY_STATE";
     private boolean mResolvingError;
-    private double mLatitude;
-    private double mLongitude;
-    private String mCurrentCity;
-    private String mCurrentState;
+    private CurrentLocation mCurrentLocation;
     private Forecast mForecast;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -75,18 +73,13 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
 
         mProgressBar.setVisibility(View.INVISIBLE);
 
-        //final double latitude = 37.8267;
-        //final double longitude = -122.423;
-
         mRefreshImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //getForecast(latitude, longitude);
                 toggleRefresh(true);
                 getForecast();
             }
         });
-        //getForecast(latitude, longitude);
         toggleRefresh(true);
         buildGoogleApiClient();
     }
@@ -94,7 +87,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     private void getForecast() {
         String apiKey = getString(R.string.API_KEY_DARKSKY);
 
-        String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+mLatitude+","+mLongitude;
+        String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude();
         if (isNetworkAvailable()) {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -157,7 +150,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
 
     private void updateDisplay() {
         toggleView(true);
-        mLocationLabel.setText(mCurrentCity + ", " + mCurrentState);
+        mLocationLabel.setText(mCurrentLocation.getCity() + ", " + mCurrentLocation.getState());
         mTemperatureLabel.setText(mForecast.getCurrent().getTemperature() + "");
         mTimeLabel.setText("At " +  mForecast.getCurrent().getFormattedTime() + " it is");
         mHumidityValue.setText(mForecast.getCurrent().getHumidity() + "");
@@ -205,18 +198,11 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+                .setFastestInterval(1000); // 1 second, in milliseconds
     }
 
     private Forecast parseForecastDetails(String JSONData) throws JSONException {
-        Forecast forecast = new Forecast(JSONData);
-        return forecast;
-    }
-
-    private Current getCurrentDetails(String jsonData) throws JSONException {
-        JSONObject forecast = new JSONObject(jsonData);
-        JSONObject currently = forecast.getJSONObject("currently");
-        return new Current(currently, forecast.getString("timezone"));
+        return new Forecast(JSONData);
     }
 
     private boolean isNetworkAvailable() {
@@ -244,14 +230,11 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     }
 
     private void setLocationInfo() {
-        mLatitude = mLastLocation.getLatitude();
-        mLongitude = mLastLocation.getLongitude();
         Geocoder gcd = new Geocoder(this, Locale.getDefault());
         try {
-            List<Address> addresses = gcd.getFromLocation(mLatitude, mLongitude, 1);
+            List<Address> addresses = gcd.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
             if (addresses.size() > 0) {
-                mCurrentCity = addresses.get(0).getLocality();
-                mCurrentState = addresses.get(0).getAdminArea();
+                mCurrentLocation = new CurrentLocation(mLastLocation.getLatitude(),mLastLocation.getLongitude(),addresses.get(0).getAdminArea(),addresses.get(0).getLocality());
             }
         }catch (Exception e){
             alertUserAboutError(R.string.error_with_location);
@@ -337,6 +320,8 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     @OnClick (R.id.dailyButton)
     public void startDailyActivity(View view){
         Intent intent = new Intent(this, DailyForecastActivity.class);
+        intent.putExtra(DAILY_FORECAST, mForecast.getDailyForecast());
+        intent.putExtra(CITY_STATE, mCurrentLocation.getCity() + ", " + mCurrentLocation.getState());
         startActivity(intent);
     }
 
