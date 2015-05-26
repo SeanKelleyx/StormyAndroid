@@ -3,6 +3,10 @@ package com.sean.stormy.weather;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /*
  * Created by snkelley on 5/22/2015.
  */
@@ -21,6 +25,17 @@ public class Day {
         this.setTimezone(timezone);
     }
 
+    public int getIconId(){
+        return Forecast.getIconId(mIcon);
+    }
+
+    public String getDayOfTheWeek(){
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE");
+        formatter.setTimeZone(TimeZone.getTimeZone(getTimezone()));
+        Date dateTime = new Date(mTime * 1000);
+        return formatter.format(dateTime);
+    }
+
     public long getTime() {
         return mTime;
     }
@@ -37,8 +52,8 @@ public class Day {
         mSummary = summary;
     }
 
-    public double getTemperatureMax() {
-        return mTemperatureMax;
+    public int getTemperatureMax() {
+        return (int) Math.round(mTemperatureMax);
     }
 
     public void setTemperatureMax(double temperatureMax) {
