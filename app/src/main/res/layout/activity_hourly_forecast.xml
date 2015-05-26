@@ -9,10 +9,20 @@
                 tools:context="com.sean.stormy.ui.HourlyForecastActivity"
                 android:background="@drawable/bg_gradient">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@android:id/list"/>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="vertical"
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:gravity="center"
+                  android:layout_below="@+id/hourlyWeatherLabel"
+                  android:layout_above="@+id/locationLabel">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@android:id/list"/>
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,5 +33,26 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:text="Hourly Weather"
+        android:textSize="30sp"
+        android:id="@+id/hourlyWeatherLabel"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/locationLabel"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        tools:text="Milwaukee, Wisconsin"
+        android:layout_marginBottom="10dp"/>
 
 </RelativeLayout>

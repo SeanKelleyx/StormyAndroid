@@ -27,16 +27,7 @@
         android:layout_toEndOf="@+id/timeLabel"
         android:src="@drawable/partly_cloudy"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/temperatureLabel"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        tools:text="100"/>
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -52,4 +43,26 @@
         tools:text="Partly Cloudy"
         android:layout_toLeftOf="@+id/temperatureLabel"
         android:layout_toStartOf="@+id/temperatureLabel"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/circleImageView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/bg_temperature"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/temperatureLabel"
+        android:layout_alignTop="@+id/circleImageView"
+        android:layout_alignBottom="@+id/circleImageView"
+        android:layout_alignLeft="@+id/circleImageView"
+        android:layout_alignRight="@+id/circleImageView"
+        android:gravity="center"
+        android:textColor="#F25019"
+        tools:text="100"/>
+
 </RelativeLayout>
