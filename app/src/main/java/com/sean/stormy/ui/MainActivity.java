@@ -45,6 +45,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String DAILY_FORECAST = "DAILY_FORECAST";
     public static final String CITY_STATE = "CITY_STATE";
+    public static final String HOURLY_FORECAST = "HOURLY_FORECAST";
     private boolean mResolvingError;
     private CurrentLocation mCurrentLocation;
     private Forecast mForecast;
@@ -325,9 +326,11 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
         startActivity(intent);
     }
 
-//    @OnClick (R.id.hourlyButton)
-//    public void startHourlyActivity(View view){
-//        Intent intent = new Intent(this, HourlyForecastActivity.class);
-//        startActivity(intent);
-//    }
+    @OnClick (R.id.hourlyButton)
+    public void startHourlyActivity(View view){
+        Intent intent = new Intent(this, HourlyForecastActivity.class);
+        intent.putExtra(HOURLY_FORECAST, mForecast.getHourlyForecast());
+        intent.putExtra(CITY_STATE, mCurrentLocation.getCity() + ", " + mCurrentLocation.getState());
+        startActivity(intent);
+    }
 }

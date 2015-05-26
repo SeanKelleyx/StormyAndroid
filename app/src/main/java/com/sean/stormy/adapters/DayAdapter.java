@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.sean.stormy.R;
 import com.sean.stormy.weather.Day;
 
-/**
+/*
  * Created by snkelley on 5/26/2015.
  */
 public class DayAdapter extends BaseAdapter{

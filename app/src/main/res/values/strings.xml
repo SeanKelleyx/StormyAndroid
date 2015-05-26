@@ -24,4 +24,5 @@
     <string name="title_activity_daily_forecast">DailyForecastActivity</string>
     <string name="empty_list_text">There is no data to display</string>
     <string name="day_label_today">Today</string>
+    <string name="title_activity_hourly_forecast">HourlyForecastActivity</string>
 </resources>
