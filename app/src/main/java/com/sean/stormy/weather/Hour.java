@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -74,6 +75,20 @@ public class Hour implements Parcelable {
 
     public String getHour(){
         SimpleDateFormat formatter = new SimpleDateFormat("h a");
+        formatter.setTimeZone(TimeZone.getTimeZone(getTimezone()));
+        Date dateTime = new Date(mTime * 1000);
+        return formatter.format(dateTime);
+    }
+
+    public String getDay(){
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE");
+        formatter.setTimeZone(TimeZone.getTimeZone(getTimezone()));
+        Date dateTime = new Date(mTime * 1000);
+        return formatter.format(dateTime);
+    }
+
+    public String getDayAbbr(){
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE");
         formatter.setTimeZone(TimeZone.getTimeZone(getTimezone()));
         Date dateTime = new Date(mTime * 1000);
         return formatter.format(dateTime);

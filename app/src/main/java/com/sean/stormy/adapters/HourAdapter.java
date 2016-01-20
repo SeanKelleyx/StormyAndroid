@@ -46,6 +46,7 @@ public class HourAdapter extends BaseAdapter{
             convertView = LayoutInflater.from(mContext).inflate(R.layout.hourly_list_item, null);
             holder = new ViewHolder();
             holder.mTimeLabel = (TextView) convertView.findViewById(R.id.timeLabel);
+            holder.mDayLabel = (TextView) convertView.findViewById(R.id.dayLabel);
             holder.mSummaryLabel = (TextView) convertView.findViewById(R.id.summaryLabel);
             holder.mTemperatureLabel = (TextView) convertView.findViewById(R.id.temperatureLabel);
             holder.mIconImageView = (ImageView) convertView.findViewById(R.id.iconImageView);
@@ -58,6 +59,7 @@ public class HourAdapter extends BaseAdapter{
         Hour hour = mHours[position];
 
         holder.mTimeLabel.setText(hour.getHour());
+        holder.mDayLabel.setText(hour.getDayAbbr());
         holder.mSummaryLabel.setText(hour.getSummary());
         holder.mTemperatureLabel.setText(hour.getTemperature() + "" );
         holder.mIconImageView.setImageResource(hour.getIconId());
@@ -67,6 +69,7 @@ public class HourAdapter extends BaseAdapter{
 
     private static class ViewHolder {
         public TextView mTimeLabel;
+        public TextView mDayLabel;
         public TextView mSummaryLabel;
         public TextView mTemperatureLabel;
         public ImageView mIconImageView;

@@ -47,10 +47,11 @@ public class HourlyForecastActivity extends ListActivity {
         super.onListItemClick(l, v, position, id);
 
         String time = mHours[position].getHour();
+        String day = mHours[position].getDay();
         String temperature = mHours[position].getTemperature() + "";
         String summary = mHours[position].getSummary();
-        String message = String.format("At %s it will be %s and %s",
-                time, temperature, summary);
+        String message = String.format("At %s on %s it will be %s and %s",
+                time, day, temperature, summary);
         //TODO make activity to show hourly details
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
