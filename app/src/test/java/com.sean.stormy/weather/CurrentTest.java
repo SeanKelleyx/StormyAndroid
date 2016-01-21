@@ -45,7 +45,7 @@ public class CurrentTest {
     }
 
     @Test
-    public void test(){
+    public void testConstructor(){
         Assert.assertEquals(current.getFormattedTime(),"9:25 AM");
         Assert.assertEquals(current.getHumidity(), humidity);
         Assert.assertEquals(current.getIcon(), icon);
@@ -54,6 +54,26 @@ public class CurrentTest {
         Assert.assertEquals(current.getSummary(),summary);
         Assert.assertEquals(current.getTemperature(), 52);
         Assert.assertEquals(current.getTime(), time);
+        Assert.assertEquals(current.getTimeZone(), timezone);
+    }
+
+    @Test
+    public void testGettersSetters(){
+        current.setTime(1457280725);
+        current.setHumidity(0.12);
+        current.setIcon("clear-day");
+        current.setPrecipChance(0.13);
+        current.setTemperature(99.33);
+        current.setSummary("Clear Day");
+        current.setTimeZone(timezone);
+        Assert.assertEquals(current.getFormattedTime(),"8:12 AM");
+        Assert.assertEquals(current.getHumidity(), 0.12);
+        Assert.assertEquals(current.getIcon(), "clear-day");
+        Assert.assertEquals(current.getIconId(), R.drawable.clear_day);
+        Assert.assertEquals(current.getPrecipChance(), 13);
+        Assert.assertEquals(current.getSummary(),"Clear Day");
+        Assert.assertEquals(current.getTemperature(), 99);
+        Assert.assertEquals(current.getTime(), 1457280725);
         Assert.assertEquals(current.getTimeZone(), timezone);
     }
 
