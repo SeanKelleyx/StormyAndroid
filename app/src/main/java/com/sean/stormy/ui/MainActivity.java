@@ -31,6 +31,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -203,7 +204,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     }
 
     private Forecast parseForecastDetails(String JSONData) throws JSONException {
-        return new Forecast(JSONData);
+        return new Forecast(new JSONObject(JSONData));
     }
 
     private boolean isNetworkAvailable() {

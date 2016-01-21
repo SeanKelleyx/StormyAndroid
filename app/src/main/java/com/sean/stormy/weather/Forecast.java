@@ -14,8 +14,7 @@ public class Forecast {
     private Hour[] mHourlyForecast;
     private Day[] mDailyForecast;
 
-    public Forecast(String JSONData) throws JSONException {
-        JSONObject forecast = new JSONObject(JSONData);
+    public Forecast(JSONObject forecast) throws JSONException {
         JSONObject currently = forecast.getJSONObject("currently");
         JSONObject hourly = forecast.getJSONObject("hourly");
         JSONArray hourlyData = hourly.getJSONArray("data");
