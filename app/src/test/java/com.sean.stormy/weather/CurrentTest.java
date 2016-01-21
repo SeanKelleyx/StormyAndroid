@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by snkelley on 1/20/2016.
+ * Created by snkelley on 1/20/2016. :)
  */
 public class CurrentTest {
     final long time = 1453310735;
@@ -33,6 +33,7 @@ public class CurrentTest {
         when(forecast.getDouble("humidity")).thenReturn(humidity);
         when(forecast.getLong("time")).thenReturn(time);
         when(forecast.getString("icon")).thenReturn(icon);
+        when(forecast.getInt("precipProbability")).thenReturn(precipProbability);
         when(forecast.getString("summary")).thenReturn(summary);
         when(forecast.getDouble("temperature")).thenReturn(temperature);
         current = new Current(forecast, timezone);

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by Sean on 1/20/16.
+ * Created by Sean on 1/20/16. :)
  */
 public class DayTest {
     final long time = 1453310735;
@@ -79,7 +79,34 @@ public class DayTest {
     }
 
     @Test
+    public void testDescribeContents(){
+        Assert.assertEquals(0,day.describeContents());
+    }
+
+    @Test
     public void testWriteToParcel(){
         day.writeToParcel(parcel,0 );
+    }
+
+    @Test
+    public void testCreatorCreateFromParcel() {
+        day.writeToParcel(parcel, 0);
+        when(parcel.readLong()).thenReturn(time);
+        when(parcel.readString()).thenReturn(summary, icon, timezone);
+        when(parcel.readDouble()).thenReturn(temperatureMax);
+        Day newDay = Day.CREATOR.createFromParcel(parcel);
+        Assert.assertEquals(time, newDay.getTime());
+        Assert.assertEquals(summary, newDay.getSummary());
+        Assert.assertEquals(icon, newDay.getIcon());
+        Assert.assertEquals(R.drawable.partly_cloudy, newDay.getIconId());
+        Assert.assertEquals(52, newDay.getTemperatureMax());
+        Assert.assertEquals(timezone, newDay.getTimezone());
+        Assert.assertEquals("Wednesday", newDay.getDayOfTheWeek());
+    }
+
+    @Test
+    public void testCreatorNewArray(){
+        Day[] days = Day.CREATOR.newArray(2);
+        Assert.assertEquals(2, days.length);
     }
 }
