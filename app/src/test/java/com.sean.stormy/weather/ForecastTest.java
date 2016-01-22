@@ -1,5 +1,9 @@
 package com.sean.stormy.weather;
 
+import com.sean.stormy.R;
+
+import junit.framework.Assert;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,6 +79,23 @@ public class ForecastTest {
 
     @Test
     public void testConstructor() throws JSONException {
+        Assert.assertEquals(Current.class, forecast.getCurrent().getClass());
+        Assert.assertEquals(1,forecast.getHourlyForecast().length);
+        Assert.assertEquals(1, forecast.getDailyForecast().length);
+    }
 
+    @Test
+    public void testGetIconId(){
+        Assert.assertEquals(R.drawable.clear_day,Forecast.getIconId("anything_not_otherwise_listed"));
+        Assert.assertEquals(R.drawable.clear_day,Forecast.getIconId("clear-day"));
+        Assert.assertEquals(R.drawable.clear_night,Forecast.getIconId("clear-night"));
+        Assert.assertEquals(R.drawable.rain,Forecast.getIconId("rain"));
+        Assert.assertEquals(R.drawable.snow,Forecast.getIconId("snow"));
+        Assert.assertEquals(R.drawable.sleet,Forecast.getIconId("sleet"));
+        Assert.assertEquals(R.drawable.wind,Forecast.getIconId("wind"));
+        Assert.assertEquals(R.drawable.fog,Forecast.getIconId("fog"));
+        Assert.assertEquals(R.drawable.cloudy,Forecast.getIconId("cloudy"));
+        Assert.assertEquals(R.drawable.partly_cloudy,Forecast.getIconId("partly-cloudy-day"));
+        Assert.assertEquals(R.drawable.cloudy_night,Forecast.getIconId("partly-cloudy-night"));
     }
 }
