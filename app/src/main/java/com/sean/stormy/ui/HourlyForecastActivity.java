@@ -9,6 +9,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.sean.stormy.AnalyticsApplication;
 import com.sean.stormy.R;
 import com.sean.stormy.adapters.HourAdapter;
 import com.sean.stormy.weather.Hour;
@@ -21,6 +24,7 @@ import butterknife.InjectView;
 public class HourlyForecastActivity extends ListActivity {
     private Hour[] mHours;
     private String mLocationString;
+    private Tracker mTracker;
 
     @InjectView(R.id.locationLabel) TextView mLocationLabel;
 
@@ -30,6 +34,11 @@ public class HourlyForecastActivity extends ListActivity {
         setContentView(R.layout.activity_hourly_forecast);
 
         ButterKnife.inject(this);
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Hourly");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         Intent intent = getIntent();
         Parcelable[] parcelables = intent.getParcelableArrayExtra(MainActivity.HOURLY_FORECAST);

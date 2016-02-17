@@ -17,11 +17,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.sean.stormy.AnalyticsApplication;
 import com.sean.stormy.CurrentLocation;
 import com.sean.stormy.R;
 import com.sean.stormy.weather.Forecast;
@@ -53,6 +56,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
+    private Tracker mTracker;
 
     @InjectView(R.id.temperatureLabel) TextView mTemperatureLabel;
     @InjectView(R.id.timeLabel) TextView mTimeLabel;
@@ -72,6 +76,11 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Main");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         mProgressBar.setVisibility(View.INVISIBLE);
 
