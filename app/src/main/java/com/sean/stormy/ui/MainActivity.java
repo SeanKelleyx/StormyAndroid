@@ -57,6 +57,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
     private Tracker mTracker;
+    private long mOrderAgain = 0;
 
     @InjectView(R.id.temperatureLabel) TextView mTemperatureLabel;
     @InjectView(R.id.timeLabel) TextView mTimeLabel;
@@ -99,7 +100,10 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
         String apiKey = getString(R.string.API_KEY_DARKSKY);
 
         String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude();
-        if (isNetworkAvailable()) {
+        if(System.currentTimeMillis() / 1000L < mOrderAgain){
+            toggleRefresh(false);
+        }else if (isNetworkAvailable()) {
+            mOrderAgain = System.currentTimeMillis() / 1000L + (30 * 60 * 1000);
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(forecastUrl)
