@@ -50,6 +50,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     public static final String DAILY_FORECAST = "DAILY_FORECAST";
     public static final String CITY_STATE = "CITY_STATE";
     public static final String HOURLY_FORECAST = "HOURLY_FORECAST";
+    private final long FIVE_MINUTES = 5 * 60 * 1000;
     private boolean mResolvingError;
     private CurrentLocation mCurrentLocation;
     private Forecast mForecast;
@@ -98,12 +99,14 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
 
     private void getForecast() {
         String apiKey = getString(R.string.API_KEY_DARKSKY);
+        long current = System.currentTimeMillis();
 
         String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey + "/"+mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude();
-        if(System.currentTimeMillis() / 1000L < mOrderAgain){
+        if(current < mOrderAgain){
             toggleRefresh(false);
+            updateDisplay();
         }else if (isNetworkAvailable()) {
-            mOrderAgain = System.currentTimeMillis() / 1000L + (5 * 60 * 1000);
+            mOrderAgain = (current + FIVE_MINUTES);
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(forecastUrl)
