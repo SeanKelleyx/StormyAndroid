@@ -4,7 +4,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.TimeZone;
 
 /*
@@ -32,7 +31,7 @@ public class Current {
     public String getFormattedTime(){
         SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
         formatter.setTimeZone(TimeZone.getTimeZone(getTimeZone()));
-        Date dateTime = new Date(getTime() * 1000);
+        long dateTime = System.currentTimeMillis();
         return formatter.format(dateTime);
     }
 
