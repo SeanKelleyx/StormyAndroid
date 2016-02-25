@@ -103,7 +103,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
         if(System.currentTimeMillis() / 1000L < mOrderAgain){
             toggleRefresh(false);
         }else if (isNetworkAvailable()) {
-            mOrderAgain = System.currentTimeMillis() / 1000L + (30 * 60 * 1000);
+            mOrderAgain = System.currentTimeMillis() / 1000L + (5 * 60 * 1000);
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(forecastUrl)
