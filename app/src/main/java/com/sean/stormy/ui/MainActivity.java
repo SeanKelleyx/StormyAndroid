@@ -17,6 +17,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
@@ -39,6 +41,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -72,12 +76,17 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
     @InjectView(R.id.humidityLabel) TextView mHumidityLabel;
     @InjectView(R.id.precipLabel) TextView mPrecipLabel;
     @InjectView(R.id.locationLabel) TextView mLocationLabel;
+    @InjectView(R.id.adView) AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
@@ -252,12 +261,28 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
         try {
             List<Address> addresses = gcd.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
             if (addresses.size() > 0) {
-                mCurrentLocation = new CurrentLocation(mLastLocation.getLatitude(),mLastLocation.getLongitude(),addresses.get(0).getAdminArea(),addresses.get(0).getLocality());
+                mCurrentLocation = new CurrentLocation(mLastLocation.getLatitude(),mLastLocation.getLongitude(),getUSStateCode(addresses.get(0)),addresses.get(0).getLocality());
             }
         }catch (Exception e){
             alertUserAboutError(R.string.error_with_location);
         }
         getForecast();
+    }
+
+    private String getUSStateCode(Address USAddress){
+        String fullAddress = "";
+        for(int j = 0; j <= USAddress.getMaxAddressLineIndex(); j++)
+            if (USAddress.getAddressLine(j) != null)
+                fullAddress = fullAddress + " " + USAddress.getAddressLine(j);
+
+        String stateCode = null;
+        Pattern pattern = Pattern.compile(" [A-Z]{2} ");
+        String helper = fullAddress.toUpperCase().substring(0, fullAddress.toUpperCase().indexOf("USA"));
+        Matcher matcher = pattern.matcher(helper);
+        while (matcher.find())
+            stateCode = matcher.group().trim();
+
+        return stateCode;
     }
 
     @Override
