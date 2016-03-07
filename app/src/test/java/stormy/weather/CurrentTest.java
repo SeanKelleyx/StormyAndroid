@@ -1,6 +1,6 @@
-package com.sean.stormy.weather;
+package com.sean.blueskyweather.weather;
 
-import com.sean.stormy.R;
+import com.sean.blueskyweather.R;
 
 import junit.framework.Assert;
 

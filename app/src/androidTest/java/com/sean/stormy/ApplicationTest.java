@@ -1,4 +1,4 @@
-package com.sean.stormy;
+package com.sean.blueskyweather;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -1,8 +1,8 @@
-package com.sean.stormy.weather;
+package com.sean.blueskyweather.weather;
 
 import android.os.Parcel;
 
-import com.sean.stormy.R;
+import com.sean.blueskyweather.R;
 
 import junit.framework.Assert;
 

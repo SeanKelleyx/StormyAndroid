@@ -130,7 +130,6 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
                             alertUserAboutError(R.string.error_message);
                         }
                     });
-                    Log.v(TAG, e.getMessage());
                 }
 
                 @Override
@@ -155,7 +154,7 @@ public class  MainActivity extends Activity implements GoogleApiClient.Connectio
                             alertUserAboutError(R.string.error_message);
                         }
                     } catch (Exception e) {
-                        Log.e(TAG, "Exception caught: ", e);
+                        Log.e(TAG, "Exception caught in response from darksky api: ", e);
                     }
                 }
             });

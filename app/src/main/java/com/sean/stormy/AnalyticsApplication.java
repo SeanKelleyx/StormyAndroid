@@ -17,7 +17,7 @@
 package com.sean.stormy;
 
 import android.app.Application;
-
+import com.sean.stormy.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
