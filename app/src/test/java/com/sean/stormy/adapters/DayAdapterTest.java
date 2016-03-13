@@ -1,10 +1,10 @@
-package com.sean.blueskyweather.adapters;
+package com.sean.stormy.adapters;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.sean.blueskyweather.weather.Day;
+import com.sean.stormy.weather.Day;
 
 import junit.framework.Assert;
 

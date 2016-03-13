@@ -1,4 +1,4 @@
-package com.sean.blueskyweather;
+package com.sean.stormy;
 
 import junit.framework.Assert;
 

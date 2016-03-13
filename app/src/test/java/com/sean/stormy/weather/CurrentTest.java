@@ -1,6 +1,7 @@
-package com.sean.blueskyweather.weather;
+package com.sean.stormy.weather;
 
-import com.sean.blueskyweather.R;
+
+import com.sean.stormy.R;
 
 import junit.framework.Assert;
 
@@ -47,7 +48,7 @@ public class CurrentTest {
 
     @Test
     public void testConstructor(){
-        Assert.assertEquals(current.getFormattedTime(),"9:25 AM");
+        Assert.assertEquals(true, current.getFormattedTime().matches("^\\d{1,2}:\\d{2} ((?:)(?i)am|pm)$"));
         Assert.assertEquals(current.getHumidity(), humidity);
         Assert.assertEquals(current.getIcon(), icon);
         Assert.assertEquals(current.getIconId(), R.drawable.partly_cloudy);
@@ -67,7 +68,7 @@ public class CurrentTest {
         current.setTemperature(99.33);
         current.setSummary("Clear Day");
         current.setTimeZone(timezone);
-        Assert.assertEquals(current.getFormattedTime(),"8:12 AM");
+        Assert.assertEquals(true,current.getFormattedTime().matches("^\\d{1,2}:\\d{2} ((?:)(?i)am|pm)$"));
         Assert.assertEquals(current.getHumidity(), 0.12);
         Assert.assertEquals(current.getIcon(), "clear-day");
         Assert.assertEquals(current.getIconId(), R.drawable.clear_day);

@@ -1,6 +1,6 @@
-package com.sean.blueskyweather.ui;
+package com.sean.stormy.ui;
 
-import com.sean.blueskyweather.R;
+import com.sean.stormy.R;
 
 import org.junit.After;
 import org.junit.Before;
