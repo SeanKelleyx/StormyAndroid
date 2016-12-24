@@ -1,0 +1,184 @@
+<html>
+<head>
+	<title>Blue Sky Weather</title>
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.9/css/weather-icons.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script> 	
+	<style>
+		body {
+			background: #131C62; /* For browsers that do not support gradients */
+			background: -webkit-linear-gradient(#131C62, #207CCA); /* For Safari 5.1 to 6.0 */
+			background: -o-linear-gradient(#131C62, #207CCA); /* For Opera 11.1 to 12.0 */
+			background: -moz-linear-gradient(#131C62, #207CCA); /* For Firefox 3.6 to 15 */
+			background: linear-gradient(#131C62, #207CCA); /* Standard syntax */
+			font-family: 'Roboto', open-sans;
+			color: white;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+		}
+
+		html {
+		     height: 100%;
+		}
+
+		#actions {
+		  margin-top: 40px;
+		}
+
+		#footer {
+		  
+		  width: 100%;
+		}
+
+		#mainapparea {
+			min-height: 363px;
+		}
+
+		.spacer{
+		  height: 40px;
+		}
+
+		.bgText {
+		    font-size: 67px;
+		}
+
+		.mdText {
+		  font-size: 40px;
+		}
+
+		.smText {
+		  font-size: 30px;
+		}
+
+		.xsText {
+		  font-size: 15px;
+		}
+
+		.actionButton{
+		  background-color: white;
+		  padding: 10px 5px;
+		  font-weight: bold;
+		  color: #207CCA;
+		}
+	</style>
+</head>
+<body>
+	
+	<div class="text-center">
+	  <h1>Blue Sky Weather</h1>
+	  <div id="mainapparea">
+		  <div class="mdText" id="time"></div>  
+		  <div class="bgText" id="icon"></div>
+		  <div class="bgText" id="temp"></div>
+		  <div class="row">
+		    <div class="col-md-3 col-md-offset-3 mdText">
+		      <div id="humidLab" class="xsText"></div>
+		      <div id="humidity"></div>
+		    </div>
+		    <div class="col-md-3 mdText">
+		      <div id="precipLab" class="xsText"></div>
+		      <div id="precipitation"></div>
+		    </div>
+		  </div>
+		  <div class="smText" id="description"></div>
+		  <div class="xsText" id="dailyDescription"></div>
+		</div>
+	</div>
+	<div id="footer">
+	  <div id="actions" class="row">
+	    <div class="col-md-8 col-md-offset-2">
+	      <div class="row text-center">
+	        <div class="col-md-6" id="reload_button">
+	          <div class="actionButton">Reload Weather</div>
+	        </div>
+	        <div class="col-md-6" id="get_app_button">
+	          <div class="actionButton">Get the Android app</div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	  <div class="spacer text-center"><a href="https://darksky.net/poweredby/" target="_blank">Powered by Dark Sky</a></div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var forecastUrlBase = "https://api.darksky.net/forecast/0c4a3122c65300df02575eb927a8b8cd/";
+			var lat;
+			var lon;
+			var iconMap = {
+				"day-sunny":"wi-forecast-io-clear-day", 
+				"night-clear":"wi-forecast-io-clear-night", 
+				"rain":"wi-forecast-io-rain: rain",
+				"snow":"wi-forecast-io-snow",
+				"sleet":"wi-forecast-io-sleet",
+				"wind":"wi-forecast-io-wind",
+				"fog":"wi-forecast-io-fog",
+				"cloudy":"wi-forecast-io-cloudy",
+				"day-cloudy":"wi-forecast-io-partly-cloudy-day",
+				"night-cloudy":"wi-forecast-io-partly-cloudy-night",
+				"hail":"wi-forecast-io-hail",
+				"thunderstorm":"wi-forecast-io-thunderstorm",
+				"tornado":"wi-forecast-io-tornado"
+			};
+
+			function getWeather(){
+				$.getJSON(forecastUrlBase + lat + ',' + lon + "?callback=?", function(data) {
+					console.log(data);
+					populateView(data);
+				});
+			}
+
+			function populateView(data){
+				var options = {
+					weekday: "long", year: "numeric", month: "short",
+					day: "numeric", hour: "2-digit", minute: "2-digit"
+				};
+				var epoch = data.currently.time;
+				var description = data.currently.summary;
+				var icon = data.currently.icon;
+				var humidity = data.currently.humidity;
+				var precip = data.currently.precipProbability;
+				var temp = data.currently.temperature;
+				var detail = data.daily.summary;
+				var date = new Date(0);
+				date.setUTCSeconds(epoch);
+				var time = date.toLocaleTimeString("en-us", options);
+				$("#icon").html("<i class=\"wi wi-forecast-io-"+icon+"\"></i>");
+				$("#time").html(time);
+				$("#temp").html(temp + "&deg;");
+				$("#humidity").html(humidity);
+				$("#precipitation").html(precip);
+				$("#description").html(description);
+				$("#dailyDescription").html(detail);
+				$("#humidLab").html("Humidity");
+				$("#precipLab").html("Precipitation");
+			}
+
+			function getLocation() {
+				if(navigator.geolocation){
+					navigator.geolocation.getCurrentPosition(setPosition);
+				}else{ 
+					alert("Geolocation is not supported by this browser, app will not work.");
+				}
+			}
+
+			function setPosition(position) {
+				lat = position.coords.latitude;
+				lon = position.coords.longitude;
+				getWeather();
+			}
+
+			$("#get_app_button").click(function(){
+				window.open("https://play.google.com/store/apps/details?id=com.sean.stormy&hl=en");
+			});
+
+			$("#reload_button").click(function(){
+				getWeather();
+			});
+
+			getLocation();
+		});
+	</script>
+</body>
+</html>
